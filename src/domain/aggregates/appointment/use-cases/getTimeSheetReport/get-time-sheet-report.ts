@@ -24,26 +24,33 @@ export default class GetTimeSheetReport implements IUseCase{
     }
 
     async execute(): Promise<any> {
-        return await this.gateway.getAll();
-        // const result = await this.gateway.getAll();
-        // if(result){
-        //     let dateItems:DateItem[] = [];
-        //     result.forEach((element: any) => {
-        //         dateItems.push(element);
-        //     });
-        //     const dates = this.groupByDate(dateItems);
-        //     let output:Report;
-        //     output.employe_registry_number = this.input.employe_registry_number;
-        //     output.dates = dates;
-        //     return output;
-        // }
-        // throw new Error("Method not implemented.");
+        //return await this.gateway.getAll();
+
+        const result = await this.gateway.getAll();
+        if(result){
+            let dateItems:DateItem[] = [];
+            result.forEach((element: any) => {
+                let dateItem: DateItem = {
+                    time:element.time,
+                    time_sheet_id:element.id,
+                }
+                dateItems.push(dateItem);
+            });
+            const dates = this.groupByDate(dateItems);
+            let output:Report = {
+                employe_registry_number: this.input.employe_registry_number,
+                dates: dates
+            };
+            return output;
+        }
+        throw new Error("Method not implemented.");
     }
 
     private groupByDate(items: DateItem[]): Dates {
         const groupedDates: Dates = {};
         items.forEach(item => {
-            const dateKey = item.time.toLocaleDateString()
+            console.log('item',item);
+            const dateKey = new Date(item.time).toLocaleDateString();
             if (!groupedDates[dateKey]) {
                 groupedDates[dateKey] = [];
             }

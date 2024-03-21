@@ -1,6 +1,5 @@
 export interface DateItem {
     time_sheet_id: number;
-    employe_registry_number: string;
     time: Date;
 }
 

@@ -44,15 +44,7 @@ export default class AppointmentRoute {
       async (req: Request, res: Response) => {
         try {
           if (req.params.employe_registry_number) {
-            const input: getTimeSheetReportInput = {
-              employe_registry_number: Number(
-                req.params.employe_registry_number,
-              ),
-            };
-            const gateway: IGateway = new DynamoGateway();
-            const useCase: IUseCase = new GetTimeSheetReport(input, gateway);
-            const output: any = await useCase.execute();
-            console.log('output', output);
+            const output = await AppointmentController.generateMonthReport(Number(req.params.employe_registry_number));
             return res.status(200).json(output);
           } else {
             return res

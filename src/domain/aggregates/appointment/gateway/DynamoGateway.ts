@@ -35,7 +35,7 @@ export default class DynamoGateway implements IGateway{
       );
 
       let input = {
-        time : new Date(),
+        time : new Date().toISOString(),
         registry_number : registry_number,
         id: chaveAleatoria
       };
