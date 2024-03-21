@@ -48,6 +48,45 @@
             }
           }
         }
-      }
+      },
+      "/appointments":{
+        "post":{
+          "tags": [
+            "Appointment"
+          ],
+          "requestBody":{
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "registry_number": {
+                      "type": "number",
+                      "required": true
+                    }
+                  }
+                },
+                "examples": {
+                  "example1": {
+                    "summary": "Exemplo de corpo de requisição",
+                    "value": {
+                      "registry_number":5566
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Registro de ponto efetuado com sucesso"
+            },
+            "400": {
+              "description": "Erro ao efetuar registro de ponto"
+            }
+          },
+          "summary": "Save new appointment"
+        }
+    }
     }
   }
