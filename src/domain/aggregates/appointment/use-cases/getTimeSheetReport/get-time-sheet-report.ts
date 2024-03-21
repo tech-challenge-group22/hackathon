@@ -24,9 +24,7 @@ export default class GetTimeSheetReport implements IUseCase{
     }
 
     async execute(): Promise<any> {
-        //return await this.gateway.getAll();
-
-        const result = await this.gateway.getAll();
+        const result = await this.gateway.getLastMonthReport(this.input.employe_registry_number);
         if(result){
             let dateItems:DateItem[] = [];
             result.forEach((element: any) => {
@@ -49,7 +47,6 @@ export default class GetTimeSheetReport implements IUseCase{
     private groupByDate(items: DateItem[]): Dates {
         const groupedDates: Dates = {};
         items.forEach(item => {
-            console.log('item',item);
             const dateKey = new Date(item.time).toLocaleDateString();
             if (!groupedDates[dateKey]) {
                 groupedDates[dateKey] = [];

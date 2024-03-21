@@ -47,12 +47,25 @@ export default class DynamoGateway implements IGateway{
       return response;
     }
 
-    async getAll(): Promise<any> {
-      const params = {
+    async getLastMonthReport(registry_number:number) {
+      const now = new Date();
+      const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      const lastMonthStart = lastMonth.toISOString();
+      const nextMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      const lastMonthEnd = nextMonth.toISOString();
+      const output = await this.dynamodb.scan({
         TableName: this.table,
-      };
-      const scanResult = await this.dynamodb.scan(params);
-      console.log('scanResult',scanResult);
-      return scanResult?.Items;
-    }
+        FilterExpression: '#registry_number =:registry_number AND #time BETWEEN :start AND :end',
+        ExpressionAttributeNames: {
+            '#registry_number': 'registry_number',
+            '#time': 'time'
+        },
+        ExpressionAttributeValues: {
+            ':registry_number':registry_number,
+            ':start': lastMonthStart,
+            ':end': lastMonthEnd
+        }
+    });
+      return output.Items;
+    };
 }
