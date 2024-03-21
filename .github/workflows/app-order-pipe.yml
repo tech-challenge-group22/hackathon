@@ -44,9 +44,9 @@ jobs:
       - name: Build and Push to ECR
         run: |
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ECR_PASSWORD}}
-          docker build -t order/production .
-          docker tag order/production:latest ${{ secrets.AWS_ECR_PASSWORD}}/order/production:latest
-          docker push ${{ secrets.AWS_ECR_PASSWORD}}/order/production:latest
+          docker build -t appointment/production .
+          docker tag appointment/production:latest ${{ secrets.AWS_ECR_PASSWORD}}/appointment/production:latest
+          docker push ${{ secrets.AWS_ECR_PASSWORD}}/appointment/production:latest
 
   deploy-aws:
     runs-on: ubuntu-latest
