@@ -25,7 +25,6 @@ export default class AppointmentController {
       const gateway: IGateway = new DynamoGateway();
       const useCase: IUseCase = new GetTimeSheetReport(input, gateway);
       const output: any = await useCase.execute();
-      console.log('output', output);
       return output;
     }
 
