@@ -46,4 +46,13 @@ export default class DynamoGateway implements IGateway{
       const response = await this.dynamodb.send(new PutCommand(params));
       return response;
     }
+
+    async getAll(): Promise<any> {
+      const params = {
+        TableName: this.table,
+      };
+      const scanResult = await this.dynamodb.scan(params);
+      console.log('scanResult',scanResult);
+      return scanResult?.Items;
+    }
 }

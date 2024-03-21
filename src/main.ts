@@ -7,6 +7,6 @@ const server = new ExpressAdapter();
 
 const appointmentRoute = new AppointmentRoute(server);
 
-server.router(appointmentRoute);
+server.router(AppointmentRoute);
 
 server.listen(3000);
