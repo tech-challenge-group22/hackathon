@@ -1,1 +1,53 @@
- {}
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Hackathon | Ponto Eletrônico",
+      "description": "API Documentation",
+      "version": "1.0.0"
+    },
+    "components": {
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer"
+        }
+      }
+    },
+    "security": [
+      {
+        "bearerAuth": []
+      }
+    ],
+    "paths": {
+      "/report/{employe_registry_number}": {
+        "get": {
+          "tags": [
+            "Report"
+          ],
+          "summary": "Generate report",
+          "description": "Returns time sheet of the last month",
+          "operationId": "get report",
+          "parameters": [
+            {
+              "name": "employe_registry_number",
+              "in": "path",
+              "description": "Employe Registry Number",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "format": "int64"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Relatório gerado com sucesso"
+            },
+            "400": {
+              "description": "Erro ao gerar relatório"
+            }
+          }
+        }
+      }
+    }
+  }
