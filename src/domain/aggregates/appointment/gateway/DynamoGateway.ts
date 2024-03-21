@@ -8,7 +8,7 @@ import TimeSheetRecord from "../entities/TimeSheetRecord";
 export default class DynamoGateway implements IGateway{
 
     private dynamodb: DynamoDBDocument;
-    private table = 'teste';
+    private table = process.env.DYNAMODB_NAME;
     
     constructor() {
       this.dynamodb = DynamoDBDocument.from(
