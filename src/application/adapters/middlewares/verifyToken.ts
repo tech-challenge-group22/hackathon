@@ -29,9 +29,8 @@ export function validatePermission(req: Request, res: Response, registryRequest:
     if (error) {
       return res.status(403).json({ message: 'Token inválido' });
     } else {
-      console.log('decoded',decoded);
-      let decodedObj = JSON.parse(String(decoded));
-      if(decodedObj?.employee_registry != registryRequest){
+      let value: any = decoded;
+      if(value.employee_registry != registryRequest){
         res.status(403).json({ message: 'Você não tem permissão para utilizar uma registro diferente do seu' });
       }
     }
