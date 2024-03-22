@@ -1,4 +1,5 @@
 import NodemailerAdapter from "../../../../../application/adapters/NodemailerAdapter";
+import { eventTypeString } from "../../entities/TimeSheetRecord";
 import IGateway from "../../interfaces/Gateway";
 import IUseCase from "../../interfaces/UseCase";
 import { DateItem, Dates, Report, getTimeSheetReportInput } from "./getTimeSheetReportDTO";
@@ -34,6 +35,7 @@ export default class GetTimeSheetReport implements IUseCase{
                 let dateItem: DateItem = {
                     time:element.time,
                     time_sheet_id:element.id,
+                    event_type: eventTypeString.get(element.event_type)
                 }
                 dateItems.push(dateItem);
             });

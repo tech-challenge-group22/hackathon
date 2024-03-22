@@ -1,6 +1,7 @@
 export interface DateItem {
     time_sheet_id: number;
     time: Date;
+    event_type: string;
 }
 
 export interface Dates {

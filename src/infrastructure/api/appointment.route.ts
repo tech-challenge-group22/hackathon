@@ -3,11 +3,6 @@ import { Request, Response } from 'express';
 import AppointmentController from '../../domain/aggregates/appointment/controllers/AppointmentController';
 
 import { SaveRecordOutputDTO } from '../../domain/aggregates/appointment/use-cases/saveRecord/save-recordDTO';
-import GetTimeSheetReport from '../../domain/aggregates/appointment/use-cases/getTimeSheetReport/get-time-sheet-report';
-import { getTimeSheetReportInput } from '../../domain/aggregates/appointment/use-cases/getTimeSheetReport/getTimeSheetReportDTO';
-import IGateway from '../../domain/aggregates/appointment/interfaces/Gateway';
-import DynamoGateway from '../../domain/aggregates/appointment/gateway/DynamoGateway';
-import IUseCase from '../../domain/aggregates/appointment/interfaces/UseCase';
 
 export default class AppointmentRoute {
   private readonly httpServer: HttpServer;

@@ -2,6 +2,7 @@ import IGateway from "../../interfaces/Gateway";
 import IUseCase from "../../interfaces/UseCase";
 import { GetIntraDayRecordInputDTO, GetIntraDayRecordOutputDTO, QueryParamsDTO } from "./get-intraday-recordsDTO";
 import { DateItem, Dates, Report, getTimeSheetReportInput } from "../getTimeSheetReport/getTimeSheetReportDTO";
+import { eventTypeString } from "../../entities/TimeSheetRecord";
 
 export default class GetIntraDayRecord implements IUseCase {
     input: GetIntraDayRecordInputDTO;
@@ -30,7 +31,8 @@ export default class GetIntraDayRecord implements IUseCase {
                 results.forEach((item: any) => {
                     let dateMarksResult: DateItem = {
                         time: item.time,
-                        time_sheet_id: item.id
+                        time_sheet_id: item.id,
+                        event_type: eventTypeString.get(item.event_type)
                     }
                     dateMarksResults.push(dateMarksResult);
             });

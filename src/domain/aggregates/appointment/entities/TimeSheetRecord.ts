@@ -20,4 +20,8 @@ export enum EventType {
     Intervalo = 2,
     Saida = 3,
   }
-  
+
+export const eventTypeString = new Map();
+eventTypeString.set(1,"Entrada");
+eventTypeString.set(2,"Intervalo");
+eventTypeString.set(3,"Saida");
