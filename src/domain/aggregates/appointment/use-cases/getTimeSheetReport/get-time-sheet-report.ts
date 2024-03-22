@@ -1,3 +1,4 @@
+import NodemailerAdapter from "../../../../../application/adapters/NodemailerAdapter";
 import IGateway from "../../interfaces/Gateway";
 import IUseCase from "../../interfaces/UseCase";
 import { DateItem, Dates, Report, getTimeSheetReportInput } from "./getTimeSheetReportDTO";
@@ -5,6 +6,7 @@ import { DateItem, Dates, Report, getTimeSheetReportInput } from "./getTimeSheet
 export default class GetTimeSheetReport implements IUseCase{
     input:getTimeSheetReportInput;
     gateway:IGateway;
+    mailer: NodemailerAdapter;
     mock = `[
         {
           "time": "2024-03-20T22:54:58.330Z",
@@ -18,9 +20,10 @@ export default class GetTimeSheetReport implements IUseCase{
         }
       ]`
     
-    constructor(input: getTimeSheetReportInput, gateway: IGateway){
+    constructor(input: getTimeSheetReportInput, gateway: IGateway, mailer: NodemailerAdapter){
         this.gateway = gateway;
         this.input = input;
+        this.mailer = mailer;
     }
 
     async execute(): Promise<any> {
@@ -39,6 +42,18 @@ export default class GetTimeSheetReport implements IUseCase{
                 employe_registry_number: this.input.employe_registry_number,
                 dates: dates
             };
+
+            let formattedReport = `<h2>Employee Registry Number: ${output.employe_registry_number}</h2>`;
+
+            for (const date in output.dates) {
+                formattedReport += `<p>Date: ${date}</p>`;
+
+                for (const entry of output.dates[date]) {
+                    formattedReport += `<p>Time: ${entry.time}, ${entry.time}</p>`;
+                }
+            }
+            
+            this.mailer.execute({ to: this.input.employe_email, text: formattedReport })
             return output;
         }
         throw new Error("Method not implemented.");
