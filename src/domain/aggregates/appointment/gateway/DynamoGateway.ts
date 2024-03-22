@@ -24,20 +24,23 @@ export default class DynamoGateway implements IGateway{
     }
 
     async createAppointment (
-      registry_number:number
+      registry_number:number,
+      event_type: number
     ): Promise<any> {
       const chaveAleatoria: UUID = uuidv4() as UUID;
 
       let record : TimeSheetRecord = new TimeSheetRecord(
         new Date(), 
         registry_number, 
-        chaveAleatoria
+        chaveAleatoria, 
+        event_type
       );
 
       let input = {
         time : new Date().toISOString(),
         registry_number : registry_number,
-        id: chaveAleatoria
+        id: chaveAleatoria, 
+        event_type
       };
       const params = {
         TableName: this.table,

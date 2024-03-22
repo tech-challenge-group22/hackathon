@@ -72,14 +72,19 @@
                     "registry_number": {
                       "type": "number",
                       "required": true
+                    },
+                    "event_type": {
+                      "type": "number",
+                      "required": true
                     }
                   }
                 },
                 "examples": {
                   "example1": {
-                    "summary": "Exemplo de corpo de requisição",
+                    "summary": "Exemplo de corpo de requisição event_number : 1 = Entrada | 2 = Intervalo | 3 = Saída",
                     "value": {
-                      "registry_number":5566
+                      "registry_number":5566,
+                      "event_number": 1
                     }
                   }
                 }
