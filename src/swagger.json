@@ -19,7 +19,7 @@
       }
     ],
     "paths": {
-      "/report/{employe_registry_number}": {
+      "/report": {
         "get": {
           "tags": [
             "Report"
@@ -30,12 +30,21 @@
           "parameters": [
             {
               "name": "employe_registry_number",
-              "in": "path",
+              "in": "query",
               "description": "Employe Registry Number",
               "required": true,
               "schema": {
                 "type": "integer",
                 "format": "int64"
+              }
+            },
+            {
+              "name": "employe_email",
+              "in": "query",
+              "description": "Employe e-mail to send report",
+              "required": true,
+              "schema": {
+                "type": "string"
               }
             }
           ],
@@ -63,14 +72,19 @@
                     "registry_number": {
                       "type": "number",
                       "required": true
+                    },
+                    "event_type": {
+                      "type": "number",
+                      "required": true
                     }
                   }
                 },
                 "examples": {
                   "example1": {
-                    "summary": "Exemplo de corpo de requisição",
+                    "summary": "Exemplo de corpo de requisição event_number : 1 = Entrada | 2 = Intervalo | 3 = Saída",
                     "value": {
-                      "registry_number":5566
+                      "registry_number":5566,
+                      "event_number": 1
                     }
                   }
                 }
@@ -87,6 +101,36 @@
           },
           "summary": "Save new appointment"
         }
+    },
+    "/appointments/{registry_number}": {
+      "get": {
+        "tags": [
+          "Appointment"
+        ],
+        "summary": "Generate Intraday Records Report",
+        "description": "Returns intraday timesheet records",
+        "operationId": "get report",
+        "parameters": [
+          {
+            "name": "registry_number",
+            "in": "path",
+            "description": "Employee Registry Number",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Relatório gerado com sucesso"
+          },
+          "400": {
+            "description": "Erro ao gerar relatório"
+          }
+        }
+      }
     }
     }
   }

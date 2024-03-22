@@ -1,3 +1,4 @@
+import { EventType } from "../../entities/TimeSheetRecord";
 import IAwsMySqlGateway from "../../interfaces/AwsRdsGateway";
 import IGateway from "../../interfaces/Gateway";
 import IUseCase from "../../interfaces/UseCase";
@@ -18,11 +19,22 @@ export default class SaveRecord implements IUseCase{
     async execute(input: SaveRecordInputDTO): Promise<any> {
 
         try{
-            const hasemployee = await this.checkEmployee(input.registry_number)
+           const hasemployee = await this.checkEmployee(input.registry_number)
             if(hasemployee.length > 0){
 
+                if(input.event_type !== EventType.Entrada && input.event_type !== EventType.Intervalo && input.event_type !== EventType.Saida)
+                {
+                    let output:SaveRecordOutputDTO = {
+                        hasError: false,
+                        message: 'Invalid event type',
+                        result: [],
+                    };
+
+                    return output;
+                }
                 const result = await this.gateway.createAppointment(
                     input.registry_number,
+                    input.event_type
                     );          
                     let output:SaveRecordOutputDTO = {
                         hasError: false,
