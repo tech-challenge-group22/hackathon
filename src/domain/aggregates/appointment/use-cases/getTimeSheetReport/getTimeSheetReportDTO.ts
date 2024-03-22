@@ -10,6 +10,7 @@ export interface Dates {
 export interface Report {
     employe_registry_number: number;
     dates: Dates;
+    work_hours: number;
 }
 
 export interface getTimeSheetReportInput{

@@ -34,10 +34,13 @@ export default class GetTimeSheetReport implements IUseCase{
                 }
                 dateItems.push(dateItem);
             });
+            dateItems = dateItems.sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
             const dates = this.groupByDate(dateItems);
+            const totalHours = this.totalMonthHours(dateItems, dates);
             let output:Report = {
                 employe_registry_number: this.input.employe_registry_number,
-                dates: dates
+                dates: dates,
+                work_hours: totalHours
             };
             return output;
         }
@@ -56,4 +59,29 @@ export default class GetTimeSheetReport implements IUseCase{
         return groupedDates;
     }
 
+    private totalMonthHours(items: DateItem[], groupedDates: Dates){
+        let totalHours = 0;
+        let countedDates: string[] = [];
+        items.forEach(item => {
+            const dateKey:string = new Date(item.time).toLocaleDateString();
+            if(countedDates.indexOf(dateKey) == -1){
+            for (let index = 0; index < groupedDates[dateKey].length; index++) {
+                countedDates.push(dateKey);
+                const item = groupedDates[dateKey][index];
+                if(index%2 != 0){
+                    totalHours += this.calculateHoursBetween(groupedDates[dateKey][index-1].time, item.time);
+                }
+            }
+            }
+        })
+        console.log('totalHours',totalHours);
+        return Number(totalHours.toFixed(2));
+    }
+
+    private calculateHoursBetween(startTime: Date, endTime: Date): number {
+        const timeDiff = Math.abs( new Date(endTime).getTime() - new Date(startTime).getTime());
+        const hours = timeDiff / (1000 * 60 * 60);
+        console.log('hours',hours)
+        return hours;
+    }
 }
