@@ -8,6 +8,7 @@ import { getTimeSheetReportInput } from '../../domain/aggregates/appointment/use
 import IGateway from '../../domain/aggregates/appointment/interfaces/Gateway';
 import DynamoGateway from '../../domain/aggregates/appointment/gateway/DynamoGateway';
 import IUseCase from '../../domain/aggregates/appointment/interfaces/UseCase';
+import { validatePermission } from '../../application/adapters/middlewares/verifyToken';
 
 export default class AppointmentRoute {
   private readonly httpServer: HttpServer;
@@ -44,6 +45,8 @@ export default class AppointmentRoute {
       async (req: Request, res: Response) => {
         try {
           if (req.params.employe_registry_number) {
+            validatePermission(req, res, Number(req.params.employe_registry_number));
+            console.log('VALID');
             const output = await AppointmentController.generateMonthReport(Number(req.params.employe_registry_number));
             return res.status(200).json(output);
           } else {
