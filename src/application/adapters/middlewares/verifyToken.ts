@@ -15,6 +15,7 @@ export function verifyToken(req: Request, res: Response, next: NextFunction) {
     if (error) {
       return res.status(403).json({ message: 'Token inválido' });
     } else {
+      console.log('decoded',decoded);
       req.body.payloadJwt = decoded;
       next();
     }

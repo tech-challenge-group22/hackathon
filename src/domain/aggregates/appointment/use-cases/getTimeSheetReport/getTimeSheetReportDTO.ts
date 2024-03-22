@@ -14,4 +14,5 @@ export interface Report {
 
 export interface getTimeSheetReportInput{
     employe_registry_number:number;
+    employe_email: string;
 }

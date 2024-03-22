@@ -3,5 +3,6 @@ export default interface IGateway{
         registry_number:number, 
         event_type: number
     ) : Promise<any>
-    getAll():Promise<any>;
+    getLastMonthReport(registry_number: number): Promise<any>;
+    getIntradayRecordsByRegistryNumber(registry_number: number): Promise<any>;
 }

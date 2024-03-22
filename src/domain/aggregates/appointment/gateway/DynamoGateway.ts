@@ -8,7 +8,7 @@ import TimeSheetRecord from "../entities/TimeSheetRecord";
 export default class DynamoGateway implements IGateway{
 
     private dynamodb: DynamoDBDocument;
-    private table = 'teste';
+    private table = process.env.DYNAMODB_NAME;
     
     constructor() {
       this.dynamodb = DynamoDBDocument.from(
@@ -50,12 +50,66 @@ export default class DynamoGateway implements IGateway{
       return response;
     }
 
-    async getAll(): Promise<any> {
+    async getLastMonthReport(registry_number:number) {
+      const now = new Date();
+      const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      const lastMonthStart = lastMonth.toISOString();
+      const nextMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      const lastMonthEnd = nextMonth.toISOString();
+      const output = await this.dynamodb.scan({
+        TableName: this.table,
+        FilterExpression: '#registry_number =:registry_number AND #time BETWEEN :start AND :end',
+        ExpressionAttributeNames: {
+            '#registry_number': 'registry_number',
+            '#time': 'time'
+        },
+        ExpressionAttributeValues: {
+            ':registry_number':registry_number,
+            ':start': lastMonthStart,
+            ':end': lastMonthEnd
+        }
+    });
+      return output.Items;
+    };
+
+    async getIntradayRecordsByRegistryNumber(registry_number: number): Promise<any> {
+      const start_date = new Date();
+      start_date.setHours(0, 0, 0, 0);
+
+      const end_date = new Date();
+      end_date.setHours(23, 59, 59, 999);
+
       const params = {
         TableName: this.table,
+        IndexName: 'registry_number-time-index', // Substitua pelo nome do seu GSI
+        KeyConditionExpression: '#registry_number = :registry_number AND #time BETWEEN :start_date AND :end_date',
+        ExpressionAttributeNames: {
+          "#registry_number": "registry_number",
+          "#time": "time"
+        },
+        ExpressionAttributeValues: {
+          ":registry_number": registry_number,
+          ':start_date': start_date.toISOString(),
+          ':end_date': end_date.toISOString()
+        },
+        ScanIndexForward: true // Para ordem ascendente; false para descendente
       };
-      const scanResult = await this.dynamodb.scan(params);
-      console.log('scanResult',scanResult);
-      return scanResult?.Items;
-    }
+      
+      const results = await this.dynamodb.query(params);
+      // Versão scan
+      // const results = await this.dynamodb.scan({
+      //   TableName: this.table,
+      //   FilterExpression: '#registry_number =:registry_number AND #time BETWEEN :start_date AND :end_date',
+      //   ExpressionAttributeNames: {
+      //     '#registry_number': 'registry_number',
+      //     '#time': 'time'
+      //   },
+      //   ExpressionAttributeValues: {
+      //     ':registry_number': registry_number,
+      //     ':start_date': start_date.toISOString(),
+      //     ':end_date': end_date.toISOString()
+      //   }
+      // });
+      return results.Items;
+  };
 }
