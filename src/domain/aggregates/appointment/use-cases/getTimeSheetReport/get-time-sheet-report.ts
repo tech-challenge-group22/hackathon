@@ -46,15 +46,17 @@ export default class GetTimeSheetReport implements IUseCase{
                 work_hours: totalHours
             };
 
-            let formattedReport = `<h2>Employee Registry Number: ${output.employe_registry_number}</h2>`;
+            let formattedReport = `<h2>Matrícula do funcionário: ${output.employe_registry_number}</h2>`;
 
             for (const date in output.dates) {
-                formattedReport += `<p>Date: ${date}</p>`;
+                formattedReport += `<p>Data: ${date}</p>`;
 
                 for (const entry of output.dates[date]) {
-                    formattedReport += `<p>Time: ${entry.time}, ${entry.time}</p>`;
+                    formattedReport += `<p>Hora: ${entry.time}, ${entry.time}</p>`;
                 }
             }
+
+            formattedReport += `<br /><p>Total de horas trabalhadas: ${output.work_hours}</p>`;
             
             this.mailer.execute({ to: this.input.employe_email, text: formattedReport })
             return output;
