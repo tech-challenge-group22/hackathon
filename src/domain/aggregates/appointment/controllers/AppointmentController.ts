@@ -1,3 +1,4 @@
+import AwsMySqlGateway from "../gateway/AwsMySqlGateway";
 import DynamoGateway from "../gateway/DynamoGateway";
 import IGateway from "../interfaces/Gateway";
 import IUseCase from "../interfaces/UseCase";
@@ -11,6 +12,7 @@ export default class AppointmentController {
     static async createAppointment(body: string): Promise<any> {
         const createUseCase: SaveRecord = new SaveRecord(
           new DynamoGateway(),
+          new AwsMySqlGateway()
         );
         const input: SaveRecordInputDTO =
           body as unknown as SaveRecordInputDTO;
