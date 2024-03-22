@@ -6,6 +6,7 @@ import GetTimeSheetReport from "../use-cases/getTimeSheetReport/get-time-sheet-r
 import { getTimeSheetReportInput } from "../use-cases/getTimeSheetReport/getTimeSheetReportDTO";
 import SaveRecord from "../use-cases/saveRecord/save-record";
 import { SaveRecordInputDTO, SaveRecordOutputDTO } from "../use-cases/saveRecord/save-recordDTO";
+import NodemailerAdapter from '../../../../application/adapters/NodemailerAdapter';
 
 import GetIntraDayRecord from "../use-cases/getIntraDayRecord/get-intra-day-record";
 import { GetIntraDayRecordInputDTO, GetIntraDayRecordOutputDTO, QueryParamsDTO } from "../use-cases/getIntraDayRecord/get-intraday-recordsDTO";
@@ -23,12 +24,14 @@ export default class AppointmentController {
         return output;
     }
 
-    static async generateMonthReport(employeNumber: number){
+    static async generateMonthReport(employeNumber: number, employeEmail: string){
       const input: getTimeSheetReportInput = {
-        employe_registry_number: employeNumber
+        employe_registry_number: employeNumber,
+        employe_email: employeEmail
       };
       const gateway: IGateway = new DynamoGateway();
-      const useCase: IUseCase = new GetTimeSheetReport(input, gateway);
+      const mailer: NodemailerAdapter = new NodemailerAdapter();
+      const useCase: IUseCase = new GetTimeSheetReport(input, gateway, mailer);
       const output: any = await useCase.execute();
       return output;
     }

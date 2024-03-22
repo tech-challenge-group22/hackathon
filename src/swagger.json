@@ -19,7 +19,7 @@
       }
     ],
     "paths": {
-      "/report/{employe_registry_number}": {
+      "/report": {
         "get": {
           "tags": [
             "Report"
@@ -30,12 +30,21 @@
           "parameters": [
             {
               "name": "employe_registry_number",
-              "in": "path",
+              "in": "query",
               "description": "Employe Registry Number",
               "required": true,
               "schema": {
                 "type": "integer",
                 "format": "int64"
+              }
+            },
+            {
+              "name": "employe_email",
+              "in": "query",
+              "description": "Employe e-mail to send report",
+              "required": true,
+              "schema": {
+                "type": "string"
               }
             }
           ],

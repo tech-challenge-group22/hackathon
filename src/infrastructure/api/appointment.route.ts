@@ -41,11 +41,14 @@ export default class AppointmentRoute {
   getReport() {
     this.httpServer.register(
       'get',
-      '/report/:employe_registry_number',
+      '/report',
       async (req: Request, res: Response) => {
         try {
-          if (req.params.employe_registry_number) {
-            const output = await AppointmentController.generateMonthReport(Number(req.params.employe_registry_number));
+          if (req.query.employe_registry_number && req.query.employe_email) {
+            const output = await AppointmentController.generateMonthReport(
+              Number(req.query.employe_registry_number),
+              String(req.query.employe_email),
+            );
             return res.status(200).json(output);
           } else {
             return res
