@@ -3,4 +3,5 @@ export default interface IGateway{
         registry_number:number, 
     ) : Promise<any>
     getLastMonthReport(registry_number: number): Promise<any>;
+    getIntradayRecordsByRegistryNumber(registry_number: number): Promise<any>;
 }

@@ -96,6 +96,36 @@
           },
           "summary": "Save new appointment"
         }
+    },
+    "/appointments/{registry_number}": {
+      "get": {
+        "tags": [
+          "Appointment"
+        ],
+        "summary": "Generate Intraday Records Report",
+        "description": "Returns intraday timesheet records",
+        "operationId": "get report",
+        "parameters": [
+          {
+            "name": "registry_number",
+            "in": "path",
+            "description": "Employee Registry Number",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Relatório gerado com sucesso"
+          },
+          "400": {
+            "description": "Erro ao gerar relatório"
+          }
+        }
+      }
     }
     }
   }
