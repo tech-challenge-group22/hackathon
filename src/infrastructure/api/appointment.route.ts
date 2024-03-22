@@ -2,12 +2,7 @@ import HttpServer from '../../application/ports/HttpServer';
 import { Request, Response } from 'express';
 import AppointmentController from '../../domain/aggregates/appointment/controllers/AppointmentController';
 
-import { SaveRecordOutputDTO } from '../../domain/aggregates/appointment/use-cases/saveRecord/save-recordDTO';
-import GetTimeSheetReport from '../../domain/aggregates/appointment/use-cases/getTimeSheetReport/get-time-sheet-report';
-import { getTimeSheetReportInput } from '../../domain/aggregates/appointment/use-cases/getTimeSheetReport/getTimeSheetReportDTO';
-import IGateway from '../../domain/aggregates/appointment/interfaces/Gateway';
-import DynamoGateway from '../../domain/aggregates/appointment/gateway/DynamoGateway';
-import IUseCase from '../../domain/aggregates/appointment/interfaces/UseCase';
+import { SaveRecordInputDTO, SaveRecordOutputDTO } from '../../domain/aggregates/appointment/use-cases/saveRecord/save-recordDTO';
 import { validatePermission } from '../../application/adapters/middlewares/verifyToken';
 
 export default class AppointmentRoute {
@@ -28,6 +23,8 @@ export default class AppointmentRoute {
       '/appointments',
       async (req: Request, resp: Response) => {
         try {
+          const input: SaveRecordInputDTO = req.body as unknown as SaveRecordInputDTO;
+          validatePermission(req, resp, input.registry_number);
           const output: SaveRecordOutputDTO =
             await AppointmentController.createAppointment(req.body);
           return resp.status(200).json(output);
