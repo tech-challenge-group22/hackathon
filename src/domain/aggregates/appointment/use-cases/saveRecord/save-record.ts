@@ -1,31 +1,47 @@
+import IAwsMySqlGateway from "../../interfaces/AwsRdsGateway";
 import IGateway from "../../interfaces/Gateway";
 import IUseCase from "../../interfaces/UseCase";
 import { SaveRecordInputDTO, SaveRecordOutputDTO } from "./save-recordDTO";
-import { UUID } from "crypto";
-import { v4 as uuidv4 } from 'uuid';
 
 export default class SaveRecord implements IUseCase{
 
     private readonly gateway: IGateway;
+    private readonly rdsgateway : IAwsMySqlGateway
 
     constructor(
         gateway: IGateway,
+        rdsgateway : IAwsMySqlGateway
     ) {
         this.gateway = gateway;
+        this.rdsgateway = rdsgateway;
     }
     async execute(input: SaveRecordInputDTO): Promise<any> {
 
         try{
-        const result = await this.gateway.createAppointment(
-            input.registry_number,
-            );          
-            let output:SaveRecordOutputDTO = {
-                hasError: false,
-                message: 'Appointment inserted successfully',
-                result: result,
-            };
+            const hasemployee = await this.checkEmployee(input.registry_number)
+            if(hasemployee.length > 0){
 
-            return output;
+                const result = await this.gateway.createAppointment(
+                    input.registry_number,
+                    );          
+                    let output:SaveRecordOutputDTO = {
+                        hasError: false,
+                        message: 'Appointment inserted successfully',
+                        result: result,
+                    };
+    
+                return output;
+
+            }else{
+                let output:SaveRecordOutputDTO = {
+                    hasError: false,
+                    message: 'Invalid employee',
+                    result: [],
+                };
+
+                return output
+            }
+            
         }
         catch (error: any) {
             const output: SaveRecordOutputDTO = {
@@ -38,6 +54,10 @@ export default class SaveRecord implements IUseCase{
         
         
 
+    }
+     async checkEmployee(registry : number){
+       let result : any = await this.rdsgateway.getEmployeeByRegistry(registry)
+       return result
     }
 
 }
