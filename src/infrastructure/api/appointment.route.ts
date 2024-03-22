@@ -19,6 +19,7 @@ export default class AppointmentRoute {
   async routes() {
     this.createAppointment();
     this.getReport();
+    this.getIntraDayRecords();
   }
 
   createAppointment() {
@@ -58,4 +59,21 @@ export default class AppointmentRoute {
       },
     );
   }
+
+  getIntraDayRecords() {
+    this.httpServer.register(
+        'get',
+        '/appointments/:registry_number',
+        async (req: Request, resp: Response) => {
+            const registry_number = Number(req.params.registry_number);
+            const output = await AppointmentController.getIntraDayRecord(registry_number);
+            if (output.hasError) {
+                return resp.status(400).json(output);
+            } else {
+                return resp.status(200).json(output);
+            }
+        }
+        )
+    }
+
 }

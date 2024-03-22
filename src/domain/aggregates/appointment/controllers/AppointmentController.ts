@@ -7,6 +7,9 @@ import { getTimeSheetReportInput } from "../use-cases/getTimeSheetReport/getTime
 import SaveRecord from "../use-cases/saveRecord/save-record";
 import { SaveRecordInputDTO, SaveRecordOutputDTO } from "../use-cases/saveRecord/save-recordDTO";
 
+import GetIntraDayRecord from "../use-cases/getIntraDayRecord/get-intra-day-record";
+import { GetIntraDayRecordInputDTO, GetIntraDayRecordOutputDTO, QueryParamsDTO } from "../use-cases/getIntraDayRecord/get-intraday-recordsDTO";
+
 export default class AppointmentController {
    
     static async createAppointment(body: string): Promise<any> {
@@ -29,5 +32,16 @@ export default class AppointmentController {
       const output: any = await useCase.execute();
       return output;
     }
+
+    static async getIntraDayRecord(registry_number: number): Promise<any> {
+      const input: GetIntraDayRecordInputDTO = {
+        registry_number: registry_number
+      }
+
+      const gateway: IGateway = new DynamoGateway();
+      const useCase: IUseCase = new GetIntraDayRecord(input, gateway);
+      const output: any = await useCase.execute(input);
+      return output;
+  }
 
 }
