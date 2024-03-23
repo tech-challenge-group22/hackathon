@@ -9,7 +9,7 @@ import { SaveRecordInputDTO, SaveRecordOutputDTO } from "../use-cases/saveRecord
 import NodemailerAdapter from '../../../../application/adapters/NodemailerAdapter';
 
 import GetIntraDayRecord from "../use-cases/getIntraDayRecord/get-intra-day-record";
-import { GetIntraDayRecordInputDTO, GetIntraDayRecordOutputDTO, QueryParamsDTO } from "../use-cases/getIntraDayRecord/get-intraday-recordsDTO";
+import { GetIntraDayRecordInputDTO, GetIntraDayRecordOutputDTO } from "../use-cases/getIntraDayRecord/get-intraday-recordsDTO";
 
 export default class AppointmentController {
    
