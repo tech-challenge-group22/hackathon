@@ -84,7 +84,7 @@
                     "summary": "Exemplo de corpo de requisição event_number : 1 = Entrada | 2 = Intervalo | 3 = Saída",
                     "value": {
                       "registry_number":5566,
-                      "event_number": 1
+                      "event_type": 1
                     }
                   }
                 }
