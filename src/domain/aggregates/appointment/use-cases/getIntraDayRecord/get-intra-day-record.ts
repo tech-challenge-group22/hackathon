@@ -46,7 +46,7 @@ export default class GetIntraDayRecord implements IUseCase {
             });
 
             const marks = this.groupByDate(dateMarksResults);
-            const totalHours = this.totalMonthHours(dateMarksResults, marks);
+            const totalHours = this.totalWorkHours(dateMarksResults, marks);
             let output: GetIntradayReportOutputDTO = {
                 registry_number: this.input.registry_number,
                 marks: marks,
@@ -77,7 +77,7 @@ export default class GetIntraDayRecord implements IUseCase {
         return groupedDates;
     }
 
-    private totalMonthHours(items: DateItem[], groupedDates: Dates){
+    private totalWorkHours(items: DateItem[], groupedDates: Dates){
         let totalHours = 0;
         let countedDates: string[] = [];
         let entryHour;
