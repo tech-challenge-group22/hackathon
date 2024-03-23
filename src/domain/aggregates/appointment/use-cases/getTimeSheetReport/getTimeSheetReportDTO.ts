@@ -1,6 +1,7 @@
 export interface DateItem {
     time_sheet_id: number;
     time: Date;
+    event_type: string;
 }
 
 export interface Dates {
@@ -10,6 +11,7 @@ export interface Dates {
 export interface Report {
     employe_registry_number: number;
     dates: Dates;
+    work_hours: number;
 }
 
 export interface getTimeSheetReportInput{

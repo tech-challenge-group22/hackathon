@@ -1,4 +1,5 @@
 import NodemailerAdapter from "../../../../../application/adapters/NodemailerAdapter";
+import { eventTypeString } from "../../entities/TimeSheetRecord";
 import IGateway from "../../interfaces/Gateway";
 import IUseCase from "../../interfaces/UseCase";
 import { DateItem, Dates, Report, getTimeSheetReportInput } from "./getTimeSheetReportDTO";
@@ -34,24 +35,30 @@ export default class GetTimeSheetReport implements IUseCase{
                 let dateItem: DateItem = {
                     time:element.time,
                     time_sheet_id:element.id,
+                    event_type: eventTypeString.get(element.event_type)
                 }
                 dateItems.push(dateItem);
             });
+            dateItems = dateItems.sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
             const dates = this.groupByDate(dateItems);
+            const totalHours = this.totalMonthHours(dateItems, dates);
             let output:Report = {
                 employe_registry_number: this.input.employe_registry_number,
-                dates: dates
+                dates: dates,
+                work_hours: totalHours
             };
 
-            let formattedReport = `<h2>Employee Registry Number: ${output.employe_registry_number}</h2>`;
+            let formattedReport = `<h2>Matrícula do funcionário: ${output.employe_registry_number}</h2>`;
 
             for (const date in output.dates) {
-                formattedReport += `<p>Date: ${date}</p>`;
+                formattedReport += `<p>Data: ${date}</p>`;
 
                 for (const entry of output.dates[date]) {
-                    formattedReport += `<p>Time: ${entry.time}, ${entry.time}</p>`;
+                    formattedReport += `<p>Hora: ${entry.time}, ${entry.time}</p>`;
                 }
             }
+
+            formattedReport += `<br /><p>Total de horas trabalhadas: ${output.work_hours}</p>`;
             
             this.mailer.execute({ to: this.input.employe_email, text: formattedReport })
             return output;
@@ -71,4 +78,36 @@ export default class GetTimeSheetReport implements IUseCase{
         return groupedDates;
     }
 
+    private totalMonthHours(items: DateItem[], groupedDates: Dates){
+        let totalHours = 0;
+        let countedDates: string[] = [];
+        let entryHour;
+        let endHour;
+        items.forEach(item => {
+            const dateKey:string = new Date(item.time).toLocaleDateString();
+            if(countedDates.indexOf(dateKey) == -1){
+                for (let index = 0; index < groupedDates[dateKey].length; index++) {
+                    countedDates.push(dateKey);
+                    const item = groupedDates[dateKey][index];
+                    if(item.event_type == 'Entrada'){
+                        entryHour = item.time;
+                    } else if(item.event_type == 'Saida'){
+                        endHour = item.time;
+                    }
+                }
+            }
+        })
+        if(entryHour && endHour){
+            totalHours = this.calculateHoursBetween(new Date(entryHour), new Date(endHour));
+        }
+        console.log('totalHours',totalHours);
+        return Number(totalHours.toFixed(2));
+    }
+
+    private calculateHoursBetween(startTime: Date, endTime: Date): number {
+        const timeDiff = Math.abs( endTime.getTime() - startTime.getTime());
+        const hours = timeDiff / (1000 * 60 * 60);
+        console.log('hours',hours)
+        return hours;
+    }
 }
