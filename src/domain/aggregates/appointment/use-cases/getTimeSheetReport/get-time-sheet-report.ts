@@ -107,6 +107,8 @@ export default class GetTimeSheetReport implements IUseCase{
                             if(currentEntryInterval && currentEndInterval){
                                 discountHours += this.calculateHoursBetween(new Date(currentEntryInterval), new Date(currentEndInterval));
                             }
+                            currentEntryInterval = null;
+                            currentEndInterval = null;
                         }
                     }
                 }
