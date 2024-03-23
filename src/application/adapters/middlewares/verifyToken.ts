@@ -21,3 +21,18 @@ export function verifyToken(req: Request, res: Response, next: NextFunction) {
     }
   });
 }
+
+export function validatePermission(req: Request, res: Response, registryRequest:number){
+  let token = req.header('Authorization')?.replace('Bearer ', '');
+  if (!token) return res.status(401).json({ message: 'Token não fornecido' });
+  jwt.verify(token, `${secretKey}`, (error, decoded) => {
+    if (error) {
+      return res.status(403).json({ message: 'Token inválido' });
+    } else {
+      let value: any = decoded;
+      if(value.employee_registry != registryRequest){
+        res.status(403).json({ message: 'Você não tem permissão para utilizar uma registro diferente do seu' });
+      }
+    }
+  });
+}

@@ -1,8 +1,9 @@
 import HttpServer from '../../application/ports/HttpServer';
 import { Request, Response } from 'express';
 import AppointmentController from '../../domain/aggregates/appointment/controllers/AppointmentController';
+import { SaveRecordInputDTO, SaveRecordOutputDTO } from '../../domain/aggregates/appointment/use-cases/saveRecord/save-recordDTO';
+import { validatePermission } from '../../application/adapters/middlewares/verifyToken';
 
-import { SaveRecordOutputDTO } from '../../domain/aggregates/appointment/use-cases/saveRecord/save-recordDTO';
 
 export default class AppointmentRoute {
   private readonly httpServer: HttpServer;
@@ -23,6 +24,8 @@ export default class AppointmentRoute {
       '/appointments',
       async (req: Request, resp: Response) => {
         try {
+          const input: SaveRecordInputDTO = req.body as unknown as SaveRecordInputDTO;
+          validatePermission(req, resp, input.registry_number);
           const output: SaveRecordOutputDTO =
             await AppointmentController.createAppointment(req.body);
           return resp.status(200).json(output);
@@ -64,6 +67,7 @@ export default class AppointmentRoute {
         '/appointments/:registry_number',
         async (req: Request, resp: Response) => {
             const registry_number = Number(req.params.registry_number);
+            validatePermission(req, resp, registry_number);
             const output = await AppointmentController.getIntraDayRecord(registry_number);
             if (output.hasError) {
                 return resp.status(400).json(output);
