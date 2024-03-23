@@ -67,6 +67,7 @@ export default class AppointmentRoute {
         '/appointments/:registry_number',
         async (req: Request, resp: Response) => {
             const registry_number = Number(req.params.registry_number);
+            validatePermission(req, resp, registry_number);
             const output = await AppointmentController.getIntraDayRecord(registry_number);
             if (output.hasError) {
                 return resp.status(400).json(output);
