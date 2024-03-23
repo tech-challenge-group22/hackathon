@@ -3,6 +3,7 @@ export interface SaveRecordInputDTO {
     time:Date, 
     registry_number:number, 
     id: UUID
+    event_type: number
   }
   
   export interface SaveRecordOutputDTO {

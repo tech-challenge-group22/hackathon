@@ -1,9 +1,9 @@
 import HttpServer from '../../application/ports/HttpServer';
 import { Request, Response } from 'express';
 import AppointmentController from '../../domain/aggregates/appointment/controllers/AppointmentController';
-
 import { SaveRecordInputDTO, SaveRecordOutputDTO } from '../../domain/aggregates/appointment/use-cases/saveRecord/save-recordDTO';
 import { validatePermission } from '../../application/adapters/middlewares/verifyToken';
+
 
 export default class AppointmentRoute {
   private readonly httpServer: HttpServer;
@@ -15,6 +15,7 @@ export default class AppointmentRoute {
   async routes() {
     this.createAppointment();
     this.getReport();
+    this.getIntraDayRecords();
   }
 
   createAppointment() {
@@ -38,13 +39,14 @@ export default class AppointmentRoute {
   getReport() {
     this.httpServer.register(
       'get',
-      '/report/:employe_registry_number',
+      '/report',
       async (req: Request, res: Response) => {
         try {
-          if (req.params.employe_registry_number) {
-            validatePermission(req, res, Number(req.params.employe_registry_number));
-            console.log('VALID');
-            const output = await AppointmentController.generateMonthReport(Number(req.params.employe_registry_number));
+          if (req.query.employe_registry_number && req.query.employe_email) {
+            const output = await AppointmentController.generateMonthReport(
+              Number(req.query.employe_registry_number),
+              String(req.query.employe_email),
+            );
             return res.status(200).json(output);
           } else {
             return res
@@ -58,4 +60,21 @@ export default class AppointmentRoute {
       },
     );
   }
+
+  getIntraDayRecords() {
+    this.httpServer.register(
+        'get',
+        '/appointments/:registry_number',
+        async (req: Request, resp: Response) => {
+            const registry_number = Number(req.params.registry_number);
+            const output = await AppointmentController.getIntraDayRecord(registry_number);
+            if (output.hasError) {
+                return resp.status(400).json(output);
+            } else {
+                return resp.status(200).json(output);
+            }
+        }
+        )
+    }
+
 }
