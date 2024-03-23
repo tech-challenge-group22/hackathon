@@ -38,9 +38,11 @@ export default class GetIntraDayRecord implements IUseCase {
             });
 
             const marks = this.groupByDate(dateMarksResults);
+            const totalHours = this.totalMonthHours(dateMarksResults, marks);
             let output: GetIntraDayRecordOutputDTO = {
                 registry_number: this.input.registry_number,
-                marks: marks
+                marks: marks,
+                work_hours: totalHours
             };
 
             return output;
@@ -55,6 +57,50 @@ export default class GetIntraDayRecord implements IUseCase {
         }
     }
 
+    private totalMonthHours(items: DateItem[], groupedDates: Dates){
+        let totalHours = 0;
+        let countedDates: string[] = [];
+        let entryHour;
+        let endHour;
+        let discountHours = 0;
+        let count = 0;
+        items.forEach(item => {
+            const dateKey:string = new Date(item.time).toLocaleDateString();
+            if(countedDates.indexOf(dateKey) == -1){
+                let currentEntryInterval;
+                let currentEndInterval;
+                for (let index = 0; index < groupedDates[dateKey].length; index++) {
+                    countedDates.push(dateKey);
+                    const item = groupedDates[dateKey][index];
+                    if(item.event_type == 'Entrada'){
+                        entryHour = item.time;
+                    } else if(item.event_type == 'Saida'){
+                        endHour = item.time;
+                    } else if(item.event_type == 'Intervalo'){
+                        count++;
+                        if(count == 1){
+                            currentEntryInterval = item.time;
+                        }else if(count == 2){
+                            currentEndInterval = item.time;
+                            count = 0;
+                            if(currentEntryInterval && currentEndInterval){
+                                discountHours += this.calculateHoursBetween(new Date(currentEntryInterval), new Date(currentEndInterval));
+                            }
+                            currentEntryInterval = null;
+                            currentEndInterval = null;
+                        }
+                    }
+                }
+            }
+        })
+        if(entryHour && endHour){
+            totalHours = this.calculateHoursBetween(new Date(entryHour), new Date(endHour));
+        }
+        console.log('totalHours',totalHours);
+        totalHours = totalHours - discountHours;
+        return Number(totalHours.toFixed(2));
+    }
+
     private groupByDate(items: DateItem[]): Dates {
         const groupedDates: Dates = {};
         items.forEach(item => {
@@ -65,5 +111,12 @@ export default class GetIntraDayRecord implements IUseCase {
             groupedDates[dateKey].push(item);
         });
         return groupedDates;
+    }
+
+    private calculateHoursBetween(startTime: Date, endTime: Date): number {
+        const timeDiff = Math.abs( endTime.getTime() - startTime.getTime());
+        const hours = timeDiff / (1000 * 60 * 60);
+        console.log('hours',hours)
+        return hours;
     }
 }

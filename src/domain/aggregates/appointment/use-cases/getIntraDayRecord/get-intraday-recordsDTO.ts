@@ -13,6 +13,7 @@ export interface GetIntraDayRecordOutputDTO {
     //message?: string;
     registry_number: number;
     marks: Dates;
+    work_hours: number;
 }
 
 export interface QueryParamsDTO {
