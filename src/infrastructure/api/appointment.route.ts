@@ -43,8 +43,10 @@ export default class AppointmentRoute {
       async (req: Request, res: Response) => {
         try {
           if (req.query.employe_registry_number && req.query.employe_email) {
+            const registry = Number(req.query.employe_registry_number);
+            validatePermission(req, res, registry);
             const output = await AppointmentController.generateMonthReport(
-              Number(req.query.employe_registry_number),
+              registry,
               String(req.query.employe_email),
             );
             return res.status(200).json(output);
