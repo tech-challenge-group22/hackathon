@@ -88,9 +88,9 @@ export default class GetTimeSheetReport implements IUseCase{
         items.forEach(item => {
             const dateKey:string = new Date(item.time).toLocaleDateString();
             if(countedDates.indexOf(dateKey) == -1){
+                let currentEntryInterval;
+                let currentEndInterval;
                 for (let index = 0; index < groupedDates[dateKey].length; index++) {
-                    let currentEntryInterval;
-                    let currentEndInterval;
                     countedDates.push(dateKey);
                     const item = groupedDates[dateKey][index];
                     if(item.event_type == 'Entrada'){
