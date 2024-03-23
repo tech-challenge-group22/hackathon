@@ -59,7 +59,7 @@ export default class DynamoGateway implements IGateway{
       const output = await this.dynamodb.query({
         TableName: this.table,
         IndexName: 'registry_number-time-index',
-        FilterExpression: '#registry_number =:registry_number AND #time BETWEEN :start AND :end',
+        KeyConditionExpression: '#registry_number =:registry_number AND #time BETWEEN :start AND :end',
         ExpressionAttributeNames: {
             '#registry_number': 'registry_number',
             '#time': 'time'
@@ -68,7 +68,8 @@ export default class DynamoGateway implements IGateway{
             ':registry_number':registry_number,
             ':start': lastMonthStart,
             ':end': lastMonthEnd
-        }
+        },
+        ScanIndexForward: true
     });
       return output.Items;
     };
