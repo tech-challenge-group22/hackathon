@@ -83,16 +83,31 @@ export default class GetTimeSheetReport implements IUseCase{
         let countedDates: string[] = [];
         let entryHour;
         let endHour;
+        let discountHours = 0;
         items.forEach(item => {
             const dateKey:string = new Date(item.time).toLocaleDateString();
             if(countedDates.indexOf(dateKey) == -1){
                 for (let index = 0; index < groupedDates[dateKey].length; index++) {
+                    let currentEntryInterval;
+                    let currentEndInterval;
+                    let count = 0;
                     countedDates.push(dateKey);
                     const item = groupedDates[dateKey][index];
                     if(item.event_type == 'Entrada'){
                         entryHour = item.time;
                     } else if(item.event_type == 'Saida'){
                         endHour = item.time;
+                    } else if(item.event_type == 'Intervalo'){
+                        count++;
+                        if(count == 1){
+                            currentEntryInterval = item.time;
+                        }else if(count == 2){
+                            currentEndInterval = item.time;
+                            count = 0;
+                            if(currentEntryInterval && currentEndInterval){
+                                discountHours += this.calculateHoursBetween(new Date(currentEntryInterval), new Date(currentEndInterval));
+                            }
+                        }
                     }
                 }
             }
@@ -101,6 +116,7 @@ export default class GetTimeSheetReport implements IUseCase{
             totalHours = this.calculateHoursBetween(new Date(entryHour), new Date(endHour));
         }
         console.log('totalHours',totalHours);
+        totalHours = totalHours - discountHours;
         return Number(totalHours.toFixed(2));
     }
 

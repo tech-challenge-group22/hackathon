@@ -56,8 +56,9 @@ export default class DynamoGateway implements IGateway{
       const lastMonthStart = lastMonth.toISOString();
       const nextMonth = new Date(now.getFullYear(), now.getMonth(), 1);
       const lastMonthEnd = nextMonth.toISOString();
-      const output = await this.dynamodb.scan({
+      const output = await this.dynamodb.query({
         TableName: this.table,
+        IndexName: 'registry_number-time-index',
         FilterExpression: '#registry_number =:registry_number AND #time BETWEEN :start AND :end',
         ExpressionAttributeNames: {
             '#registry_number': 'registry_number',
